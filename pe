@@ -1,0 +1,42 @@
+import os
+import shutil
+import pefile
+# Define the directory to search for files
+search_dir = 'C:\\'
+
+# Define the directory to copy the files to
+dest_dir = 'C:\\PE_files'
+
+# Create the destination directory if it doesn't exist
+if not os.path.exists(dest_dir):
+    os.mkdir(dest_dir)
+
+# Counter to keep track of number of files copied
+num_files_copied = 0
+
+# Walk through the directory and its subdirectories to find PE files
+for root, dirs, files in os.walk(search_dir):
+    for filename in files:
+        # Check if the file is a PE file
+        file_path = os.path.join(root, filename)
+        src_path = os.path.join(root, filename)
+        dest_path = os.path.join(dest_dir, filename)
+        try:
+            pe = pefile.PE(file_path)
+            try:
+                shutil.copy2(src_path, dest_path)
+                num_files_copied += 1
+
+                # Exit the loop if 100 files have been copied
+                if num_files_copied == 130:
+                    break
+            except pefile.PEFormatError:
+                pass
+            if len(num_files_copied) == 130:
+                break
+        except Exception as e:
+            pass
+        
+    # Exit the loop if 100 files have been copied
+    if num_files_copied == 130:
+        break
